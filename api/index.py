@@ -61,6 +61,51 @@ HTML_TEMPLATE = r'''
       border-color: #3b82f6;
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+    .tooltip .tooltip-text {
+      visibility: hidden;
+      width: 320px;
+      background-color: #1f2937;
+      color: #fff;
+      text-align: left;
+      border-radius: 8px;
+      padding: 12px;
+      position: absolute;
+      z-index: 1000;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -160px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 14px;
+      line-height: 1.4;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .tooltip .tooltip-text::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #1f2937 transparent transparent transparent;
+    }
+    .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+    .tooltip-icon {
+      color: #6b7280;
+      cursor: help;
+      transition: color 0.2s;
+    }
+    .tooltip-icon:hover {
+      color: #3b82f6;
+    }
   </style>
 </head>
 <body class="min-h-screen bg-gray-50">
@@ -100,11 +145,31 @@ HTML_TEMPLATE = r'''
           <div class="space-y-4">
             <div class="relative">
               <i data-feather="user" class="absolute left-3 top-3 w-5 h-5 text-gray-400"></i>
-              <input type="text" id="tokenName" class="input-field w-full pl-12 pr-4 py-3 rounded-xl focus:outline-none" placeholder="PAT Name" required>
+              <input type="text" id="tokenName" class="input-field w-full pl-12 pr-12 py-3 rounded-xl focus:outline-none" placeholder="PAT Name" required>
+              <div class="tooltip absolute right-3 top-3">
+                <i data-feather="help-circle" class="w-5 h-5 tooltip-icon"></i>
+                <span class="tooltip-text">
+                  <strong>How to create a Personal Access Token:</strong><br/>
+                  1. Sign in to Tableau Server<br/>
+                  2. Go to your user menu → My Account Settings<br/>
+                  3. Navigate to Personal Access Tokens<br/>
+                  4. Click "Create new token"<br/>
+                  5. Enter a token name and click "Create"<br/>
+                  6. Copy both the token name and secret
+                </span>
+              </div>
             </div>
             <div class="relative">
               <i data-feather="lock" class="absolute left-3 top-3 w-5 h-5 text-gray-400"></i>
-              <input type="password" id="tokenSecret" class="input-field w-full pl-12 pr-4 py-3 rounded-xl focus:outline-none" placeholder="PAT Secret" required>
+              <input type="password" id="tokenSecret" class="input-field w-full pl-12 pr-12 py-3 rounded-xl focus:outline-none" placeholder="PAT Secret" required>
+              <div class="tooltip absolute right-3 top-3">
+                <i data-feather="help-circle" class="w-5 h-5 tooltip-icon"></i>
+                <span class="tooltip-text">
+                  <strong>Personal Access Token Secret:</strong><br/>
+                  This is the secret value generated when you create a PAT.<br/><br/>
+                  <strong>Important:</strong> The secret is only shown once when created, so make sure to copy it immediately. If you lose it, you'll need to create a new token.
+                </span>
+              </div>
             </div>
           </div>
           <div class="md:col-span-2">
