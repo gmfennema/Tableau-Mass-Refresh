@@ -243,7 +243,7 @@ HTML_TEMPLATE = r'''
       const log = document.getElementById('log');
       const timestamp = new Date().toLocaleTimeString();
       const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
-      log.innerHTML += `[${timestamp}] ${icon} ${message}\\n`;
+      log.innerHTML += `[${timestamp}] ${icon} ${message}\n`;
       log.scrollTop = log.scrollHeight;
     }
 
@@ -589,7 +589,7 @@ HTML_TEMPLATE = r'''
           wb.updatedAt ? new Date(wb.updatedAt).toLocaleDateString() : '',
           wb.id
         ].join(','))
-      ].join('\\n');
+      ].join('\n');
       
       const blob = new Blob([csvContent], { type: 'text/csv' });
       const url = URL.createObjectURL(blob);
@@ -847,14 +847,22 @@ def get_job_status(job_id):
         else:
             return jsonify(error=f"Failed to get job status ({resp.status_code}): {resp.text}"), resp.status_code
             
+    except requests.exceptions.RequestException as e:
+        app.logger.error(f"Job status request failed: {e}")
+        return jsonify(error=f"Connection failed: {str(e)}"), 500
     except Exception as e:
-        app.logger.error(f"Error getting job status: {e}")
-        return jsonify(error=str(e)), 500
+        app.logger.error(f"Error checking job status: {e}")
+        return jsonify(error=f"Failed to get job status: {str(e)}"), 500
 
 @app.route('/health', methods=['GET'])
 def health_check():
-    """Simple health check endpoint"""
-    return jsonify(status='healthy', timestamp=datetime.now().isoformat())
+    return jsonify({
+        'status': 'healthy',
+        'timestamp': datetime.utcnow().isoformat()
+    })
+
+# This is required for Vercel deployment
+app.wsgi_app = app.wsgi_app
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=3000, debug=True)
+    app.run(debug=True) 
